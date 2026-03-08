@@ -12,12 +12,8 @@ RUN uv sync --frozen --no-dev
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Patch ADK to use v1beta instead of v1alpha (required for Gemini Live on AI Studio keys)
-RUN python -c "\
-import site, os; \
-paths = site.getsitepackages(); \
-[open(f, 'w').write(open(f).read().replace(\"return 'v1alpha'\", \"return 'v1beta'\")) \
- for d in paths for f in [os.path.join(d, 'google/adk/models/google_llm.py')] \
- if os.path.exists(f)]"
+COPY patch_adk.py .
+RUN python patch_adk.py && rm patch_adk.py
 
 COPY . .
 

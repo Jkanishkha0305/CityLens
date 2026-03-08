@@ -1,0 +1,29 @@
+# Environment — never bake secrets into the image
+.env
+.env.*
+
+# Virtual environment — packages are installed fresh via pip
+.venv
+venv
+env
+
+# Python cache
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.cursor
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
