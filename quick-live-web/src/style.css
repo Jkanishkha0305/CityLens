@@ -1,0 +1,670 @@
+:root {
+  color-scheme: dark;
+  font-family: "IBM Plex Sans", "Avenir Next", "Segoe UI", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(76, 204, 174, 0.18), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(255, 149, 89, 0.18), transparent 24%),
+    linear-gradient(180deg, #071019 0%, #0d141d 54%, #090d12 100%);
+  color: #eff7ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.appShell {
+  display: grid;
+  grid-template-columns: 336px minmax(0, 1fr);
+  gap: 18px;
+  min-height: 100vh;
+  padding: 18px;
+}
+
+.controlDock,
+.stageShell,
+.settingsCard,
+.metaCard,
+.transcriptPanel,
+.liveCard,
+.explorerPanel,
+.nearbyRail,
+.memoryPill,
+.directionPill,
+.speakingPill {
+  background: rgba(10, 16, 24, 0.76);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(20px);
+}
+
+.controlDock {
+  border-radius: 28px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.brandBlock h1 {
+  margin: 10px 0 8px;
+  font-size: 2.15rem;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.brandKicker {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(239, 247, 255, 0.62);
+}
+
+.brandCopy {
+  margin: 0;
+  color: rgba(239, 247, 255, 0.72);
+  line-height: 1.45;
+  font-size: 0.92rem;
+}
+
+.modeGrid {
+  display: grid;
+  gap: 8px;
+}
+
+.modeCard {
+  --card-accent: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.03));
+  color: inherit;
+  padding: 12px 14px;
+  transition: transform 140ms ease, border-color 140ms ease, background 140ms ease;
+}
+
+.modeCard:hover {
+  transform: translateY(-1px);
+}
+
+.modeCard.selected {
+  border-color: var(--card-accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--card-accent) 30%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--card-accent) 14%, rgba(255, 255, 255, 0.04)), rgba(255, 255, 255, 0.04));
+}
+
+.modeEmoji {
+  font-size: 1.3rem;
+}
+
+.modeText {
+  display: grid;
+  gap: 4px;
+}
+
+.modeText strong {
+  font-size: 0.92rem;
+}
+
+.modeText span {
+  font-size: 0.78rem;
+  color: rgba(239, 247, 255, 0.64);
+}
+
+.settingsCard {
+  border-radius: 22px;
+  padding: 14px;
+  display: grid;
+  gap: 8px;
+}
+
+.fieldLabel {
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(239, 247, 255, 0.58);
+}
+
+.fieldInput {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  padding: 11px 12px;
+  outline: none;
+  font-size: 0.92rem;
+}
+
+.fieldInput:focus {
+  border-color: rgba(108, 242, 190, 0.55);
+  box-shadow: 0 0 0 3px rgba(108, 242, 190, 0.14);
+}
+
+.fieldTextarea {
+  min-height: 72px;
+  resize: vertical;
+}
+
+.buttonRow,
+.quickActionBar,
+.metaGrid,
+.liveStrip {
+  display: grid;
+  gap: 10px;
+}
+
+.buttonRow,
+.quickActionBar,
+.metaGrid,
+.liveStrip {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.actionButton,
+.quickButton {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 14px;
+  color: inherit;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.92rem;
+}
+
+.actionButton.primary {
+  background: linear-gradient(135deg, #69f0b8, #87c6ff);
+  color: #05121a;
+  font-weight: 700;
+}
+
+.actionButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.metaCard {
+  border-radius: 18px;
+  padding: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.metaCard span {
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(239, 247, 255, 0.58);
+}
+
+.metaCard strong {
+  font-size: 0.92rem;
+}
+
+.metaCard strong[data-kind="good"],
+#backendState[data-kind="good"] {
+  color: #82f3c7;
+}
+
+.metaCard strong[data-kind="bad"],
+#backendState[data-kind="bad"] {
+  color: #ff9f8e;
+}
+
+.stageShell {
+  position: relative;
+  border-radius: 34px;
+  overflow: hidden;
+  min-height: calc(100vh - 44px);
+}
+
+#preview {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #020406;
+}
+
+.atmosphere {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(6, 11, 18, 0.22), transparent 18%, transparent 64%, rgba(6, 11, 18, 0.68) 100%),
+    radial-gradient(circle at top center, rgba(95, 185, 255, 0.08), transparent 30%);
+}
+
+.topBar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  z-index: 2;
+}
+
+.chip {
+  border-radius: 999px;
+  padding: 8px 13px;
+  background: rgba(8, 12, 18, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(14px);
+  font-size: 0.82rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#locationChip {
+  max-width: 45%;
+}
+
+.modeChip {
+  color: var(--mode-accent, #8fc6ff);
+}
+
+.statusChip[data-kind="good"] {
+  color: #7bf1bc;
+}
+
+.statusChip[data-kind="bad"] {
+  color: #ff9b8a;
+}
+
+.speakingPill,
+.memoryPill,
+.directionPill {
+  position: absolute;
+  z-index: 2;
+  border-radius: 999px;
+  padding: 12px 18px;
+}
+
+.speakingPill {
+  top: 72px;
+  right: 16px;
+  color: #7bf1bc;
+  font-size: 0.82rem;
+}
+
+.memoryPill {
+  left: 50%;
+  bottom: 230px;
+  transform: translateX(-50%);
+  font-style: italic;
+  color: rgba(239, 247, 255, 0.82);
+  font-size: 0.86rem;
+}
+
+.directionPill {
+  left: 50%;
+  bottom: 160px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+}
+
+.directionArrow {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.28rem;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.directionText {
+  font-weight: 600;
+}
+
+.explorerSidebar {
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: grid;
+  gap: 8px;
+}
+
+.explorerButton {
+  width: 64px;
+  min-height: 64px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  background: rgba(10, 16, 24, 0.68);
+  color: inherit;
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  padding: 7px;
+}
+
+.explorerButton span {
+  font-size: 1.18rem;
+}
+
+.explorerButton small {
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.explorerButton.selected {
+  border-color: rgba(108, 242, 190, 0.48);
+  background: rgba(108, 242, 190, 0.12);
+}
+
+.explorerPanel,
+.nearbyRail,
+.transcriptPanel {
+  position: absolute;
+  z-index: 2;
+  border-radius: 24px;
+}
+
+.explorerPanel {
+  left: 96px;
+  top: 108px;
+  width: min(308px, 32vw);
+  max-height: 50vh;
+  padding: 14px;
+}
+
+.nearbyRail {
+  top: 108px;
+  right: 16px;
+  width: min(292px, 29vw);
+  max-height: 56vh;
+  padding: 14px;
+}
+
+.panelHeader,
+.nearbyGroupHeader,
+.panelSpotHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.panelHeader {
+  margin-bottom: 10px;
+}
+
+.panelHeader span:first-child {
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.panelHeader span:last-child,
+.nearbyGroupHeader small,
+.spotCard small,
+.panelSpot small,
+.spotCard span,
+.panelSpot p,
+.emptyState,
+.spotEmpty {
+  color: rgba(239, 247, 255, 0.66);
+  font-size: 0.78rem;
+}
+
+.panelList,
+.nearbyGroups,
+.spotList,
+.transcriptLog {
+  display: grid;
+  gap: 8px;
+}
+
+.nearbyGroups {
+  max-height: calc(56vh - 54px);
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.nearbyGroup {
+  display: grid;
+  gap: 10px;
+}
+
+.spotCard,
+.panelSpot {
+  width: 100%;
+  text-align: left;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: rgba(255, 255, 255, 0.04);
+  color: inherit;
+  padding: 10px 11px;
+  display: grid;
+  gap: 5px;
+}
+
+.spotCard strong,
+.panelSpot strong {
+  font-size: 0.88rem;
+}
+
+.spotCard span,
+.panelSpot p {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.bottomStack {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 2;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  align-items: end;
+}
+
+.liveCard,
+.transcriptPanel {
+  border-radius: 24px;
+  padding: 14px;
+}
+
+.liveStrip {
+  grid-column: 1;
+}
+
+.liveLabel {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(239, 247, 255, 0.58);
+}
+
+.liveCard p {
+  margin: 0;
+  line-height: 1.45;
+  font-size: 0.9rem;
+}
+
+.quickActionBar {
+  grid-column: 1;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.quickButton {
+  background: rgba(10, 16, 24, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.quickButton.hidden {
+  display: none !important;
+}
+
+.transcriptPanel {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  padding-bottom: 10px;
+}
+
+.transcriptLog {
+  max-height: 150px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.transcriptLine {
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.transcriptLine span {
+  display: inline-block;
+  margin-bottom: 6px;
+  font-size: 0.64rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(239, 247, 255, 0.58);
+}
+
+.transcriptLine p {
+  margin: 0;
+  line-height: 1.45;
+  font-size: 0.82rem;
+}
+
+.transcriptLine.assistant {
+  border-color: rgba(108, 242, 190, 0.15);
+}
+
+.transcriptLine.system {
+  border-color: rgba(143, 198, 255, 0.15);
+}
+
+.emptyState,
+.spotEmpty {
+  padding: 16px 4px;
+  line-height: 1.5;
+}
+
+@media (max-width: 1180px) {
+  .appShell {
+    grid-template-columns: 1fr;
+  }
+
+  .stageShell {
+    min-height: 76vh;
+  }
+}
+
+@media (max-width: 820px) {
+  .appShell {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .controlDock {
+    padding: 16px;
+  }
+
+  .topBar {
+    flex-wrap: wrap;
+  }
+
+  #locationChip {
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .explorerSidebar {
+    top: auto;
+    left: 16px;
+    right: 16px;
+    bottom: 278px;
+    transform: none;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .explorerButton {
+    width: 100%;
+  }
+
+  .explorerPanel,
+  .nearbyRail {
+    position: static;
+    width: auto;
+    max-height: none;
+    margin: 0 16px;
+  }
+
+  .nearbyRail {
+    margin-top: 156px;
+  }
+
+  .bottomStack {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    grid-template-columns: 1fr;
+  }
+
+  .liveStrip,
+  .quickActionBar {
+    grid-template-columns: 1fr;
+  }
+
+  .liveStrip,
+  .quickActionBar,
+  .transcriptPanel {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .memoryPill {
+    bottom: 260px;
+  }
+
+  .directionPill {
+    bottom: 208px;
+  }
+}
