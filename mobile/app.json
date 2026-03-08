@@ -1,0 +1,58 @@
+{
+  "expo": {
+    "name": "CityLens",
+    "slug": "citylens",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0a0a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.citylens.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "CityLens uses the camera to identify landmarks, restaurants, and help navigate your surroundings.",
+        "NSMicrophoneUsageDescription": "CityLens uses the microphone for voice conversation with your AI city companion.",
+        "NSLocationWhenInUseUsageDescription": "CityLens uses your location to find nearby places and guide you home."
+      }
+    },
+    "android": {
+      "package": "com.citylens.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#0a0a0a",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ],
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-camera",
+      [
+        "expo-av",
+        {
+          "microphonePermission": "CityLens uses the microphone for voice conversation."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "CityLens uses your location to find nearby places."
+        }
+      ]
+    ]
+  }
+}
