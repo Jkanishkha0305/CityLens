@@ -15,6 +15,7 @@ from google.adk.agents.live_request_queue import LiveRequestQueue
 from google.genai import types
 
 from agents.orchestrator import create_orchestrator
+from services.firestore import get_session_context, save_session_context
 
 load_dotenv()
 
@@ -41,6 +42,16 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
     await websocket.accept()
     print(f"[WS] Connected: {session_id}")
 
+    # Load persisted context (home address, preferences) from Firestore
+    ctx = await get_session_context(session_id)
+    home_address = ctx.get("home_address", "")
+    preferences = ctx.get("preferences", "")
+    context_hint = ""
+    if home_address:
+        context_hint += f"\nUser's home address: {home_address}"
+    if preferences:
+        context_hint += f"\nUser preferences: {preferences}"
+
     # Create ADK session (ignore if already exists from a previous reconnect)
     try:
         await session_service.create_session(
@@ -51,7 +62,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
     except Exception:
         pass  # Session already exists — reuse it
 
-    agent = create_orchestrator()
+    agent = create_orchestrator(context_hint=context_hint)
     runner = Runner(
         app_name=APP_NAME,
         agent=agent,
@@ -60,7 +71,7 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
 
     run_config = RunConfig(
         streaming_mode=StreamingMode.BIDI,
-        response_modalities=["AUDIO"],
+        response_modalities=["audio"],
         input_audio_transcription=types.AudioTranscriptionConfig(),
         output_audio_transcription=types.AudioTranscriptionConfig(),
         speech_config=types.SpeechConfig(

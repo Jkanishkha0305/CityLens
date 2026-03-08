@@ -7,7 +7,7 @@ from mcp import StdioServerParameters
 MODEL = "gemini-2.5-flash-native-audio-latest"
 
 
-def create_orchestrator() -> LlmAgent:
+def create_orchestrator(context_hint: str = "") -> LlmAgent:
     return LlmAgent(
         model=MODEL,
         name="citylens",
@@ -68,7 +68,7 @@ def create_orchestrator() -> LlmAgent:
         - "There's a farmers market ahead on the left."
 
         Always be the companion the user didn't know they needed.
-        """,
+        """ + (f"\n\nSESSION CONTEXT (from memory):{context_hint}" if context_hint else ""),
         tools=[
             McpToolset(
                 connection_params=StdioConnectionParams(
