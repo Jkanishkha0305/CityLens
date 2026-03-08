@@ -1,8 +1,5 @@
-import os
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-from mcp import StdioServerParameters
+from services.maps import search_nearby_places, get_directions, geocode_address
 
 MODEL = "gemini-2.5-flash-native-audio-latest"
 
@@ -32,29 +29,27 @@ def create_orchestrator(context_hint: str = "") -> LlmAgent:
 
         FOOD, PLACES & DIRECTIONS:
         - When the user asks about food, restaurants, cafes, bars, shows, attractions,
-          or directions — use your Google Maps tools to find REAL, accurate information.
+          or directions — use search_nearby_places() with the most recent GPS coordinates.
         - Give 2-3 options maximum. Never overwhelm.
-        - For each place: name, distance to walk, price range, one key fact.
-        - Example: "Tom's Restaurant is a 4-minute walk — $12, the original Seinfeld diner,
-          locals love the turkey club."
-        - Respect preferences: "nothing touristy" → avoid chains. "under $20" → only budget.
+        - For each place: name, walking distance, price level, one key fact.
+        - Respect preferences: "nothing touristy" → avoid chains. "under $20" → budget only.
           "walk only" → walking distance only.
 
         GUIDE HOME / NAVIGATION:
         - If the user says "take me home" or sounds lost/confused, switch to calm navigation mode.
-        - Give ONE instruction at a time. Use LANDMARKS not street numbers.
+        - Use get_directions() with their GPS coordinates and home address.
+        - Give ONE step at a time. Use LANDMARKS not street numbers.
         - Speak slowly and reassuringly. Wait for confirmation before the next step.
         - If the user sounds panicked: "I'm here. I know the way. Let's go together."
-        - Retrieve home address from context or ask once if not set.
+        - Ask for home address once if not set; then remember it.
 
         GPS UPDATES:
         - You will receive periodic GPS coordinates tagged as [GPS_UPDATE].
-        - Store the most recent coordinates silently. Do not read them aloud.
-        - Use them for finding nearby places and navigation.
+        - Store the most recent lat/lng silently. Do not read them aloud.
+        - Always pass the latest coordinates when calling search_nearby_places() or get_directions().
 
         THINKING OUT LOUD:
-        - When using tools to search for places, briefly tell the user what you're doing.
-        - Example: "Let me check what's nearby..." then give results.
+        - Before calling any tool, say one short sentence: "Let me check what's nearby..."
         - Never go silent while working. Keep the user informed.
 
         PERSONALITY:
@@ -69,15 +64,5 @@ def create_orchestrator(context_hint: str = "") -> LlmAgent:
 
         Always be the companion the user didn't know they needed.
         """ + (f"\n\nSESSION CONTEXT (from memory):{context_hint}" if context_hint else ""),
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="npx",
-                        args=["-y", "@modelcontextprotocol/server-google-maps"],
-                        env={"GOOGLE_MAPS_API_KEY": os.getenv("GOOGLE_MAPS_API_KEY", "")},
-                    )
-                ),
-            )
-        ],
+        tools=[search_nearby_places, get_directions, geocode_address],
     )
