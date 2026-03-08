@@ -8,6 +8,7 @@ import TranscriptOverlay from "../components/TranscriptOverlay";
 import LiveStatusBar from "../components/StatusBar";
 import WaveformVisualizer from "../components/WaveformVisualizer";
 import QuickActions from "../components/QuickActions";
+import ModeSwitcher from "../components/ModeSwitcher";
 
 import { wsManager, WSMessage } from "../services/websocket";
 import { startAudioCapture, stopAudioCapture } from "../services/audioCapture";
@@ -15,25 +16,28 @@ import { enqueueAudioChunk, startPlayback, stopPlayback } from "../services/audi
 import { startLocationService, stopLocationService } from "../services/locationService";
 import { FRAME_INTERVAL_MS } from "../constants/config";
 import { Colors } from "../constants/colors";
+import { AppMode } from "./ModeSelectScreen";
 
 interface Props {
-  mode: "explorer" | "vision" | "memory";
+  mode: AppMode;
   onBack: () => void;
 }
 
-export default function CityLensScreen({ mode, onBack }: Props) {
+export default function CityLensScreen({ mode: initialMode, onBack }: Props) {
   const [active, setActive] = useState(false);
   const [connected, setConnected] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [transcriptLines, setTranscriptLines] = useState<{ text: string; isToolStatus: boolean }[]>([]);
+  const [currentMode, setCurrentMode] = useState<AppMode>(initialMode);
+  const [showModeSwitcher, setShowModeSwitcher] = useState(false);
 
   const cameraRef = useRef<CameraView>(null);
   const frameTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const sessionStartTimeRef = useRef<number | null>(null);
   const [sessionStartTime, setSessionStartTime] = useState<number | null>(null);
   const isMutedRef = useRef(false);
+  const currentModeRef = useRef<AppMode>(initialMode);
 
-  // Camera flash overlay for "Capture" action
   const flashOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -45,10 +49,13 @@ export default function CityLensScreen({ mode, onBack }: Props) {
     };
   }, []);
 
-  // Keep ref in sync with state so the audio callback sees the latest value
   useEffect(() => {
     isMutedRef.current = isMuted;
   }, [isMuted]);
+
+  useEffect(() => {
+    currentModeRef.current = currentMode;
+  }, [currentMode]);
 
   const handleWSMessage = useCallback((msg: WSMessage) => {
     if (msg.type === "audio") {
@@ -64,7 +71,7 @@ export default function CityLensScreen({ mode, onBack }: Props) {
     }
   }, []);
 
-  const startAll = useCallback(async () => {
+  const startAll = useCallback(async (mode: AppMode) => {
     const now = Date.now();
     sessionStartTimeRef.current = now;
     setSessionStartTime(now);
@@ -113,7 +120,6 @@ export default function CityLensScreen({ mode, onBack }: Props) {
     wsManager.disconnect();
     setTranscriptLines([]);
     setIsMuted(false);
-
     sessionStartTimeRef.current = null;
     setSessionStartTime(null);
   }, []);
@@ -124,7 +130,7 @@ export default function CityLensScreen({ mode, onBack }: Props) {
       stopAll();
     } else {
       setActive(true);
-      await startAll();
+      await startAll(currentModeRef.current);
     }
   }, [active, startAll, stopAll]);
 
@@ -134,8 +140,6 @@ export default function CityLensScreen({ mode, onBack }: Props) {
 
   const handleCapture = useCallback(() => {
     wsManager.sendText("Describe and save what you see right now.");
-
-    // White flash effect
     flashOpacity.setValue(0.6);
     Animated.timing(flashOpacity, {
       toValue: 0,
@@ -144,22 +148,37 @@ export default function CityLensScreen({ mode, onBack }: Props) {
     }).start();
   }, [flashOpacity]);
 
+  const handleModeSwitch = useCallback(async (newMode: AppMode) => {
+    setShowModeSwitcher(false);
+    if (newMode === currentModeRef.current) return;
+
+    setCurrentMode(newMode);
+    currentModeRef.current = newMode;
+
+    // If session is active, reconnect with new mode immediately
+    if (active) {
+      stopAll();
+      setTranscriptLines([]);
+      // Small delay to let disconnect settle
+      setTimeout(async () => {
+        await startAll(newMode);
+      }, 400);
+    }
+  }, [active, stopAll, startAll]);
+
   return (
     <View style={styles.root}>
-      {/* Full-screen camera preview */}
       <CameraViewComponent ref={cameraRef} active={active} />
 
-      {/* Dark overlay when idle */}
       {!active && <View style={styles.idleOverlay} />}
 
-      {/* Camera flash for capture */}
       <Animated.View
         style={[styles.flash, { opacity: flashOpacity }]}
         pointerEvents="none"
       />
 
       <SafeAreaView style={styles.ui}>
-        {/* --- Top Bar --- */}
+        {/* Top Bar */}
         <View style={styles.topBar}>
           <View style={styles.topBarSpacer} />
           <LiveStatusBar
@@ -169,26 +188,34 @@ export default function CityLensScreen({ mode, onBack }: Props) {
           />
         </View>
 
-        {/* --- Center: Waveform + Button --- */}
+        {/* Center: Waveform + Button */}
         <View style={styles.centerArea}>
           <WaveformVisualizer active={active && !isMuted} />
           <BigButton active={active} onPress={handleButtonPress} />
         </View>
 
-        {/* --- Bottom: Quick Actions + Transcript --- */}
+        {/* Bottom: Quick Actions */}
         {active && (
           <View style={styles.bottomArea}>
             <QuickActions
               isMuted={isMuted}
               onToggleMute={handleToggleMute}
               onCapture={handleCapture}
-              onExit={() => { stopAll(); onBack(); }}
+              onExit={() => setShowModeSwitcher(true)}
             />
           </View>
         )}
 
         {active && <TranscriptOverlay lines={transcriptLines} />}
       </SafeAreaView>
+
+      {/* In-session mode switcher — slides up from bottom */}
+      <ModeSwitcher
+        visible={showModeSwitcher}
+        currentMode={currentMode}
+        onSelect={handleModeSwitch}
+        onClose={() => setShowModeSwitcher(false)}
+      />
     </View>
   );
 }
