@@ -13,6 +13,7 @@ type StatusHandler = (connected: boolean) => void;
 class WebSocketManager {
   private ws: WebSocket | null = null;
   private sessionId: string;
+  private mode: string = "explorer";
   private messageQueue: string[] = [];
   private onMessage: MessageHandler | null = null;
   private onStatusChange: StatusHandler | null = null;
@@ -29,14 +30,15 @@ class WebSocketManager {
     this.onStatusChange = onStatus;
   }
 
-  connect() {
+  connect(mode: string = "explorer") {
     if (this.isConnecting || this.ws?.readyState === WebSocket.OPEN) return;
 
     this.shouldReconnect = true;
     this.isConnecting = true;
+    this.mode = mode;
 
-    const url = `${WS_URL}/${this.sessionId}`;
-    console.log(`[WS] Connecting to ${url}`);
+    const url = `${WS_URL}/${this.sessionId}?mode=${mode}`;
+    console.log(`[WS] Connecting to ${url} (mode: ${mode})`);
 
     this.ws = new WebSocket(url);
 
@@ -80,7 +82,7 @@ class WebSocketManager {
     if (this.reconnectTimer) return;
     this.reconnectTimer = setTimeout(() => {
       this.reconnectTimer = null;
-      if (this.shouldReconnect) this.connect();
+      if (this.shouldReconnect) this.connect(this.mode);
     }, WS_RECONNECT_DELAY_MS);
   }
 

@@ -7,15 +7,28 @@ interface QuickActionsProps {
   isMuted: boolean;
   onToggleMute: () => void;
   onCapture: () => void;
+  onExit: () => void;
 }
 
 export default function QuickActions({
   isMuted,
   onToggleMute,
   onCapture,
+  onExit,
 }: QuickActionsProps) {
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.actionButton}
+        onPress={onExit}
+        activeOpacity={0.7}
+        accessibilityLabel="Switch mode"
+        accessibilityRole="button"
+      >
+        <Feather name="grid" size={22} color={Colors.textSecondary} />
+        <Text style={styles.actionLabel}>Modes</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity
         style={[styles.actionButton, isMuted && styles.actionButtonMuted]}
         onPress={onToggleMute}

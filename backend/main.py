@@ -3,7 +3,7 @@ import json
 import os
 import base64
 import uuid
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
@@ -38,7 +38,11 @@ async def root():
 
 
 @app.websocket("/ws/{session_id}")
-async def websocket_endpoint(websocket: WebSocket, session_id: str):
+async def websocket_endpoint(
+    websocket: WebSocket,
+    session_id: str,
+    mode: str = Query(default="explorer"),
+):
     await websocket.accept()
     print(f"[WS] Connected: {session_id}")
 
@@ -62,7 +66,8 @@ async def websocket_endpoint(websocket: WebSocket, session_id: str):
     except Exception:
         pass  # Session already exists — reuse it
 
-    agent = create_orchestrator(context_hint=context_hint)
+    print(f"[WS] Mode: {mode}")
+    agent = create_orchestrator(mode=mode, context_hint=context_hint)
     runner = Runner(
         app_name=APP_NAME,
         agent=agent,

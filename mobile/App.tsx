@@ -7,6 +7,7 @@ import * as Location from "expo-location";
 import { Feather } from "@expo/vector-icons";
 
 import CityLensScreen from "./screens/CityLensScreen";
+import ModeSelectScreen, { AppMode } from "./screens/ModeSelectScreen";
 import { Colors } from "./constants/colors";
 
 type PermissionState = "loading" | "granted" | "denied";
@@ -41,6 +42,7 @@ export default function App() {
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [audioGranted, setAudioGranted] = useState<PermissionState>("loading");
   const [locationGranted, setLocationGranted] = useState<PermissionState>("loading");
+  const [selectedMode, setSelectedMode] = useState<AppMode | null>(null);
 
   useEffect(() => {
     requestAllPermissions();
@@ -70,11 +72,20 @@ export default function App() {
     audioGranted === "loading" ||
     locationGranted === "loading";
 
-  if (allGranted) {
+  if (allGranted && !selectedMode) {
     return (
       <>
         <StatusBar style="light" />
-        <CityLensScreen />
+        <ModeSelectScreen onSelect={setSelectedMode} />
+      </>
+    );
+  }
+
+  if (allGranted && selectedMode) {
+    return (
+      <>
+        <StatusBar style="light" />
+        <CityLensScreen mode={selectedMode} onBack={() => setSelectedMode(null)} />
       </>
     );
   }

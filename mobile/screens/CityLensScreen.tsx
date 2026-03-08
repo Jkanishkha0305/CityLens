@@ -16,7 +16,12 @@ import { startLocationService, stopLocationService } from "../services/locationS
 import { FRAME_INTERVAL_MS } from "../constants/config";
 import { Colors } from "../constants/colors";
 
-export default function CityLensScreen() {
+interface Props {
+  mode: "explorer" | "vision" | "memory";
+  onBack: () => void;
+}
+
+export default function CityLensScreen({ mode, onBack }: Props) {
   const [active, setActive] = useState(false);
   const [connected, setConnected] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -64,7 +69,7 @@ export default function CityLensScreen() {
     sessionStartTimeRef.current = now;
     setSessionStartTime(now);
 
-    wsManager.connect();
+    wsManager.connect(mode);
     startPlayback();
 
     startAudioCapture((base64Audio) => {
@@ -177,6 +182,7 @@ export default function CityLensScreen() {
               isMuted={isMuted}
               onToggleMute={handleToggleMute}
               onCapture={handleCapture}
+              onExit={() => { stopAll(); onBack(); }}
             />
           </View>
         )}
