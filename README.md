@@ -238,6 +238,9 @@ gcloud run deploy citylens-backend \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated \
+  --min-instances 1 \
+  --concurrency 80 \
+  --timeout 3600 \
   --set-env-vars "GOOGLE_API_KEY=<key>,GOOGLE_MAPS_API_KEY=<key>,GOOGLE_GENAI_USE_VERTEXAI=FALSE"
 ```
 
