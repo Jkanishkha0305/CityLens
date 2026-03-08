@@ -1,3 +1,16 @@
+# macOS
+.DS_Store
+
+# Node / React Native / Expo
+node_modules/
+.expo/
+dist/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
